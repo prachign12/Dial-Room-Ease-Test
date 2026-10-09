@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
   <meta name="theme-color" content="#0284c7" />
-  <meta name="description" content="Dial Room Ease - Liquid Azure Room Rental & Shared Living Platform with 3D Bedroom and Supabase Cloud Sync." />
+  <meta name="description" content="Dial Room Ease - Liquid Azure Room Rental & Shared Living Platform." />
   <title>Dial Room Ease | Urban Flatmate & Room Discovery</title>
 
   <!-- Typography: Plus Jakarta Sans & Inter -->
@@ -98,11 +98,14 @@
 </head>
 <body class="bg-background text-on-surface font-body relative selection:bg-secondary-fixed selection:text-on-secondary-fixed">
 
-  <!-- 3D Sky-Blue Bedroom Canvas (Fixed Background) -->
-  <div id="bedroom-canvas-container"></div>
+  <!-- ====================================================================
+       STATIC BACKGROUND IMAGE CONTAINER
+       (Replace 'YOUR_IMAGE_LINK_OR_PATH_HERE.jpg' with your image link or file path)
+       ==================================================================== -->
+  <div id="static-background-container" style="background-image: url('YOUR_IMAGE_LINK_OR_PATH_HERE.jpg');"></div>
   <div class="liquid-ambient-overlay"></div>
 
-  <!-- Live Interactive Supabase Query Toast Notification -->
+  <!-- Realtime Toast Notification -->
   <div class="fixed top-24 right-6 z-50 transform -translate-y-40 opacity-0 pointer-events-none transition-all duration-300 max-w-md w-full" id="supabaseToast">
     <div class="bg-surface-container-lowest/95 backdrop-blur-2xl border border-secondary/30 rounded-xl p-4 shadow-[0_12px_40px_rgba(0,97,148,0.22)] flex items-start gap-3">
       <div class="w-8 h-8 rounded-full bg-secondary-container/60 text-secondary flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -112,17 +115,13 @@
         <div class="flex items-center justify-between gap-2">
           <span class="font-label text-xs font-bold text-primary flex items-center gap-1.5">
             <span class="w-2 h-2 rounded-full bg-secondary animate-ping"></span>
-            Supabase Query Executed
+            Database Action Executed
           </span>
           <span class="font-label text-[10px] text-on-surface-variant font-mono" id="toastTimestamp">Just now</span>
         </div>
         <p class="font-mono text-xs text-on-surface mt-1 break-all bg-surface-container-low px-2 py-1 rounded" id="toastQueryText">
           INSERT INTO rooms
         </p>
-        <div class="flex items-center gap-2 mt-1.5 font-label text-[11px] text-secondary font-medium">
-          <span class="material-symbols-outlined text-xs">sync_saved_locally</span>
-          <span>Realtime broadcast sent to subscribers</span>
-        </div>
       </div>
       <button class="text-on-surface-variant hover:text-on-surface p-1 rounded-full" onclick="dismissToast()" type="button" aria-label="Close notification">
         <span class="material-symbols-outlined text-base">close</span>
@@ -136,21 +135,19 @@
     <!-- Cloud Status Banner -->
     <div id="cloud-status-banner" class="cloud-status-banner"></div>
 
-    <!-- Floating Liquid Glass Header / Navbar -->
+    <!-- Navbar -->
     <header class="navbar-wrapper">
       <nav class="liquid-glass navbar-glass">
-        <!-- Brand -->
         <a href="#" class="brand" aria-label="Dial Room Ease Home">
           <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-cyan-400 flex items-center justify-center text-white shadow-md shadow-sky-500/20">
             <span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">home</span>
           </div>
           <div class="flex flex-col">
             <span class="brand-name tracking-tight font-extrabold text-primary">Dial Room Ease</span>
-            <span class="text-[10px] font-label text-on-surface-variant -mt-1 hidden sm:block">Bengaluru &bull; Mumbai &bull; Delhi</span>
+            <span class="text-[10px] font-label text-on-surface-variant -mt-1 hidden sm:block">Pan-India Districts & Cities</span>
           </div>
         </a>
 
-        <!-- Role Switcher Quick Pill Buttons -->
         <div class="role-toggle-group">
           <button type="button" id="role-toggle-looking" class="role-toggle-btn active">
             <span class="material-symbols-outlined text-base">explore</span>
@@ -162,18 +159,14 @@
           </button>
         </div>
 
-        <!-- User Profile & Auth Actions -->
         <div class="nav-actions">
-          <!-- Cloud Synced indicator -->
           <div class="hidden md:flex items-center gap-1.5 bg-surface-container-lowest/80 px-3 py-1.5 rounded-full border border-sky-200/50 shadow-sm text-xs font-label">
             <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
-            <span class="text-on-surface-variant font-medium">Supabase Synced</span>
+            <span class="text-on-surface-variant font-medium">Cloud Synced</span>
           </div>
 
-          <!-- Logged-in State -->
           <div id="nav-logged-in" style="display: none; align-items: center; gap: 10px;">
             <div class="user-profile-badge">
-              <img src="user_avatar.jpg" alt="User Avatar" class="w-7 h-7 rounded-full object-cover ring-2 ring-sky-300" id="nav-user-avatar" />
               <span id="nav-user-name" class="font-medium text-xs text-on-surface max-w-[100px] truncate">User</span>
               <span id="nav-role-badge" class="bg-primary/10 text-primary text-[10px] font-semibold px-2 py-0.5 rounded-full">Seeker</span>
             </div>
@@ -183,7 +176,6 @@
             </button>
           </div>
 
-          <!-- Logged-out State -->
           <div id="nav-logged-out" style="display: flex; gap: 10px;">
             <button type="button" id="nav-login-btn" class="btn-glass btn-glass-primary">
               <span class="material-symbols-outlined text-sm">vpn_key</span>
@@ -194,90 +186,68 @@
       </nav>
     </header>
 
-    <!-- ====================================================================
-         VIEW A: "LOOKING FOR A ROOM" (Room Seeker & Interactive Map)
-         ==================================================================== -->
+    <!-- VIEW A: "LOOKING FOR A ROOM" -->
     <main id="section-looking-for-room" class="dashboard-section w-full max-w-[1440px] mx-auto px-4 md:px-8 py-6 space-y-8">
       
-      <!-- Section 1: Full Interactive Map with City Autocomplete -->
+      <!-- Interactive Map & Instant Autocomplete Search -->
       <section class="map-section">
         <div class="liquid-glass map-card-wrapper">
           <div class="map-header-row">
             <div class="map-title-group">
               <div class="flex items-center gap-2">
                 <span class="w-2.5 h-2.5 rounded-full bg-secondary animate-ping"></span>
-                <h2>Explore Rooms Across India</h2>
+                <h2>Explore Districts & Cities Across India</h2>
               </div>
-              <p>Type any city or locality below to search verified spaces with live map radar</p>
+              <p>Type any district or city name below to instantly search and zoom the map</p>
             </div>
 
-            <!-- Floating City Search Bar with Real-time Autocomplete -->
             <div class="search-container">
               <div class="search-input-box">
                 <span class="search-icon material-symbols-outlined text-secondary">search</span>
                 <input
                   type="text"
                   id="map-city-search"
-                  placeholder="Type a city (e.g. Bengaluru, Mumbai, Pune, Delhi NCR...)"
+                  placeholder="Type any district or city name..."
                   autocomplete="off"
-                  aria-label="Search city name"
+                  aria-label="Search district or city name"
                 />
               </div>
               <div id="search-suggestions" class="search-suggestions-dropdown"></div>
             </div>
           </div>
 
-          <!-- Interactive Leaflet Map Container -->
           <div id="interactive-map"></div>
         </div>
       </section>
 
-      <!-- Section 2: Seeker Workspace & Filters -->
+      <!-- Seeker Filters (State -> District Dependent Dropdowns) -->
       <section class="space-y-6">
-        <!-- Liquid Glass Filter Bar -->
         <div class="liquid-glass filter-bar-card">
           <div class="filter-grid">
-            <!-- INR Budget Filter Slider -->
             <div class="filter-group">
               <div class="filter-label">
                 <span>Maximum Monthly Budget (INR):</span>
                 <span id="budget-value-display" class="budget-val-badge">₹35,000</span>
               </div>
-              <input
-                type="range"
-                id="budget-slider"
-                class="slider-range"
-                min="5000"
-                max="60000"
-                step="1000"
-                value="35000"
-                aria-label="Maximum monthly budget in INR"
-              />
-              <div style="display: flex; justify-content: space-between; font-size: 11px; color: #475569;">
-                <span>₹5,000</span>
-                <span>₹30,000</span>
-                <span>₹60,000+</span>
-              </div>
+              <input type="range" id="budget-slider" class="slider-range" min="5000" max="60000" step="1000" value="35000" />
             </div>
 
-            <!-- City Filter Dropdown -->
+            <!-- State Dropdown -->
             <div class="filter-group">
-              <label class="filter-label" for="city-filter-select">City / Metro Zone:</label>
-              <select id="city-filter-select" class="select-glass">
-                <option value="All Cities">All Cities</option>
-                <option value="Bengaluru">Bengaluru</option>
-                <option value="Mumbai">Mumbai</option>
-                <option value="Delhi">Delhi NCR</option>
-                <option value="Hyderabad">Hyderabad</option>
-                <option value="Pune">Pune</option>
-                <option value="Jaipur">Jaipur</option>
-                <option value="Chennai">Chennai</option>
-                <option value="Kolkata">Kolkata</option>
-                <option value="Goa">Goa</option>
+              <label class="filter-label" for="state-filter-select">Select State:</label>
+              <select id="state-filter-select" class="select-glass" onchange="handleStateChange()">
+                <option value="">-- All States --</option>
               </select>
             </div>
 
-            <!-- Room Category Filter -->
+            <!-- Dependent District / City Dropdown -->
+            <div class="filter-group">
+              <label class="filter-label" for="city-filter-select">Select District / City:</label>
+              <select id="city-filter-select" class="select-glass" disabled>
+                <option value="All Cities">All Districts / Cities</option>
+              </select>
+            </div>
+
             <div class="filter-group">
               <label class="filter-label" for="type-filter-select">Room Category:</label>
               <select id="type-filter-select" class="select-glass">
@@ -291,7 +261,6 @@
           </div>
         </div>
 
-        <!-- Listings Header -->
         <div class="listings-header-row">
           <div>
             <h3 class="text-2xl font-bold text-on-surface">Available Verified Rooms</h3>
@@ -299,975 +268,138 @@
           </div>
         </div>
 
-        <!-- Room Cards Grid -->
         <div id="rooms-grid-container" class="rooms-grid"></div>
       </section>
-
     </main>
 
-    <!-- ====================================================================
-         VIEW B: "GIVING A ROOM" (HOST MANAGEMENT STUDIO)
-         ==================================================================== -->
+    <!-- VIEW B: "GIVING A ROOM" -->
     <main id="section-giving-a-room" class="w-full max-w-[1440px] mx-auto px-4 md:px-8 py-6 space-y-8" style="display: none;">
-      
-      <!-- Top Lister Stats Overview Ribbon -->
-      <div class="relative overflow-hidden rounded-2xl bg-surface-container-lowest/85 backdrop-blur-xl border border-sky-100 shadow-[0_8px_32px_rgba(0,97,148,0.08)] p-6 md:p-8">
-        <div class="absolute -right-20 -top-20 w-72 h-72 rounded-full bg-secondary-fixed/40 blur-3xl pointer-events-none"></div>
-        <div class="absolute -left-10 -bottom-10 w-48 h-48 rounded-full bg-primary-fixed/30 blur-2xl pointer-events-none"></div>
-        
-        <div class="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-          <div class="space-y-2">
-            <div class="flex items-center gap-2 flex-wrap">
-              <span class="inline-flex items-center gap-1 bg-secondary-container/30 text-on-secondary-container px-3 py-1 rounded-full font-label text-xs font-semibold">
-                <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">verified</span>
-                Verified Superhost
-              </span>
-              <span class="inline-flex items-center gap-1 bg-surface-container-high text-on-surface-variant px-3 py-1 rounded-full font-label text-xs font-medium">
-                <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-                ID Proof Authenticated
-              </span>
-            </div>
-            <h1 class="text-3xl font-extrabold text-on-surface tracking-tight">Host Management Studio</h1>
-            <p class="text-sm text-on-surface-variant max-w-2xl">Create high-transparency rentals, lock direct tenant matches, and manage live listings across Bengaluru and Mumbai with instant Supabase sync.</p>
-          </div>
-
-          <div class="grid grid-cols-3 gap-3 sm:gap-4 flex-shrink-0">
-            <div class="bg-surface-container-low/90 rounded-xl p-4 text-center shadow-sm border border-sky-100/60">
-              <span class="font-label text-xs text-on-surface-variant uppercase tracking-wider block mb-1">Active</span>
-              <span class="text-2xl sm:text-3xl text-primary font-bold" id="statsActiveCount">02</span>
-              <span class="text-xs text-on-surface-variant block mt-1">Properties</span>
-            </div>
-            <div class="bg-surface-container-low/90 rounded-xl p-4 text-center shadow-sm border border-sky-100/60">
-              <span class="font-label text-xs text-on-surface-variant uppercase tracking-wider block mb-1">Inquiries</span>
-              <span class="text-2xl sm:text-3xl text-secondary font-bold">14</span>
-              <span class="text-xs text-on-surface-variant block mt-1">Direct Leads</span>
-            </div>
-            <div class="bg-surface-container-low/90 rounded-xl p-4 text-center shadow-sm border border-sky-100/60">
-              <span class="font-label text-xs text-on-surface-variant uppercase tracking-wider block mb-1">Reputation</span>
-              <div class="flex items-center justify-center gap-0.5 text-primary">
-                <span class="text-2xl sm:text-3xl font-bold">4.9</span>
-                <span class="material-symbols-outlined text-secondary text-base" style="font-variation-settings: 'FILL' 1;">star</span>
-              </div>
-              <span class="text-xs text-on-surface-variant block mt-1">28 reviews</span>
-            </div>
-          </div>
-        </div>
+      <div class="bg-surface-container-lowest/85 backdrop-blur-xl border border-sky-100 rounded-2xl p-6 md:p-8 shadow-sm">
+        <h1 class="text-3xl font-extrabold text-on-surface tracking-tight">Host Management Studio</h1>
+        <p class="text-sm text-on-surface-variant mt-1">Publish room listings across any district or city in India.</p>
       </div>
 
-      <!-- Main Form Grid: 4-Step Listing Form (Left 8 cols) & Real-time Live Preview/Sync (Right 4 cols) -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
-        <!-- Primary Listing Form Container -->
-        <form class="lg:col-span-8 space-y-6 bg-surface-container-lowest/90 backdrop-blur-2xl rounded-2xl p-6 md:p-8 shadow-[0_16px_40px_-8px_rgba(0,97,148,0.12)] border border-sky-100 relative overflow-hidden" id="addRoomForm" onsubmit="event.preventDefault(); submitHostListing();">
-          <!-- Subtle Top Glow Bar -->
-          <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-secondary-fixed via-primary-container to-secondary"></div>
-          
-          <div class="flex items-center justify-between pb-2 border-b border-sky-100">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-secondary-container/40 flex items-center justify-center text-primary">
-                <span class="material-symbols-outlined">add_home_work</span>
-              </div>
-              <div>
-                <h2 class="text-xl font-bold text-on-surface">Publish New Room Listing</h2>
-                <p class="text-xs text-on-surface-variant">Step-by-step verification to publish live to verified city seekers</p>
-              </div>
-            </div>
-            <span class="font-label text-xs bg-surface-container text-primary font-semibold px-3 py-1 rounded-full">Draft Autosaved</span>
-          </div>
-
-          <!-- Section 1: Lister / Owner Identity -->
-          <div class="space-y-4 pt-2">
-            <div class="flex items-center gap-2">
-              <span class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center font-label text-xs font-bold">1</span>
-              <h3 class="text-base font-bold text-on-surface">Lister Identity & Contact</h3>
+        <form class="lg:col-span-8 space-y-6 bg-surface-container-lowest/90 backdrop-blur-2xl rounded-2xl p-6 md:p-8 border border-sky-100 shadow-lg" id="addRoomForm" onsubmit="event.preventDefault(); submitHostListing();">
+          <div class="space-y-4">
+            <h3 class="text-base font-bold text-on-surface">Publish New Room Listing</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input class="w-full px-4 py-2.5 rounded-xl bg-surface-container-low/70 border border-sky-100 text-sm" id="listerName" placeholder="Full Name" required type="text" value="Ananya Deshmukh" />
+              <input class="w-full px-4 py-2.5 rounded-xl bg-surface-container-low/70 border border-sky-100 text-sm" id="listerPhone" placeholder="Phone Number" required type="tel" value="9820144521" />
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="space-y-1.5">
-                <label class="font-label text-xs font-semibold text-on-surface" for="listerName">Full Name of Lister *</label>
-                <div class="relative">
-                  <input class="w-full bg-surface-container-low/70 text-on-surface rounded-xl px-4 py-2.5 text-sm placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all border border-sky-100" id="listerName" placeholder="e.g. Rahul Sharma" required type="text" value="Ananya Deshmukh" />
-                  <span class="material-symbols-outlined absolute right-3 top-2.5 text-secondary text-sm">badge</span>
-                </div>
-              </div>
-
-              <div class="space-y-1.5">
-                <div class="flex items-center justify-between">
-                  <label class="font-label text-xs font-semibold text-on-surface" for="listerPhone">Phone Number (WhatsApp) *</label>
-                  <span class="inline-flex items-center gap-1 font-label text-[11px] text-secondary font-medium">
-                    <span class="material-symbols-outlined text-xs">check_circle</span> OTP Verified
-                  </span>
-                </div>
-                <div class="relative flex items-center">
-                  <span class="absolute left-3.5 font-label text-xs text-on-surface-variant font-semibold">+91</span>
-                  <input class="w-full pl-12 pr-4 bg-surface-container-low/70 text-on-surface rounded-xl py-2.5 text-sm placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all border border-sky-100" id="listerPhone" placeholder="98765 43210" required type="tel" value="98201 44521" />
-                </div>
-              </div>
+              <input class="w-full px-4 py-2.5 rounded-xl bg-surface-container-low/70 border border-sky-100 text-sm" id="citySelect" placeholder="District / City Name" required type="text" value="Bengaluru" />
+              <input class="w-full px-4 py-2.5 rounded-xl bg-surface-container-low/70 border border-sky-100 text-sm" id="localityInput" placeholder="Locality" required type="text" value="Koramangala" />
             </div>
 
-            <!-- Lister Role Selector -->
-            <div class="space-y-2 pt-1">
-              <label class="font-label text-xs font-semibold text-on-surface">I am listing as: *</label>
-              <div class="grid grid-cols-3 gap-3" id="roleSelector">
-                <button class="role-pill active-role flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl font-label text-xs font-semibold bg-primary-container text-on-primary-container shadow-sm transition-all border border-sky-300/40" onclick="selectRole(this, 'Property Owner')" type="button">
-                  <span class="material-symbols-outlined text-sm">key</span> Property Owner
-                </button>
-                <button class="role-pill flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl font-label text-xs font-semibold bg-surface-container-low text-on-surface hover:bg-surface-container transition-all border border-sky-100" onclick="selectRole(this, 'Existing Flatmate')" type="button">
-                  <span class="material-symbols-outlined text-sm">group</span> Flatmate
-                </button>
-                <button class="role-pill flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl font-label text-xs font-semibold bg-surface-container-low text-on-surface hover:bg-surface-container transition-all border border-sky-100" onclick="selectRole(this, 'Verified Agent')" type="button">
-                  <span class="material-symbols-outlined text-sm">real_estate_agent</span> Verified Agent
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 2: Location & Exact Navigation -->
-          <div class="space-y-4 pt-2">
-            <div class="flex items-center gap-2">
-              <span class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center font-label text-xs font-bold">2</span>
-              <h3 class="text-base font-bold text-on-surface">Location & Exact Navigation</h3>
-            </div>
+            <input class="w-full px-4 py-2.5 rounded-xl bg-surface-container-low/70 border border-sky-100 text-sm" id="prominentLandmark" placeholder="Landmark" required type="text" value="Near Metro" />
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="space-y-1.5">
-                <label class="font-label text-xs font-semibold text-on-surface" for="citySelect">City *</label>
-                <select class="w-full bg-surface-container-low/70 text-on-surface rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest border border-sky-100" id="citySelect" required>
-                  <option selected value="Bengaluru">Bengaluru, Karnataka</option>
-                  <option value="Mumbai">Mumbai, Maharashtra</option>
-                  <option value="Pune">Pune, Maharashtra</option>
-                  <option value="Delhi">Delhi NCR</option>
-                  <option value="Hyderabad">Hyderabad</option>
-                </select>
-              </div>
-              <div class="space-y-1.5">
-                <label class="font-label text-xs font-semibold text-on-surface" for="localityInput">Locality / Sector *</label>
-                <input class="w-full bg-surface-container-low/70 text-on-surface rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest border border-sky-100" id="localityInput" placeholder="e.g. Koramangala 4th Block, Bandra West" required type="text" value="Koramangala 4th Block" />
-              </div>
-            </div>
-
-            <div class="space-y-1.5">
-              <label class="font-label text-xs font-semibold text-on-surface" for="prominentLandmark">Prominent Landmark (Critical for Dial Directions) *</label>
-              <div class="relative">
-                <span class="material-symbols-outlined absolute left-3.5 top-2.5 text-secondary text-sm">explore</span>
-                <input class="w-full pl-10 pr-4 bg-surface-container-low/70 text-on-surface rounded-xl py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest border border-sky-100" id="prominentLandmark" placeholder="e.g., 200m from Sony World Junction" required type="text" value="Opposite Sony World Signal, Behind Costa Coffee" />
-              </div>
-            </div>
-
-            <div class="space-y-1.5">
-              <label class="font-label text-xs font-semibold text-on-surface" for="fullAddress">Complete Flat / House Address *</label>
-              <textarea class="w-full bg-surface-container-low/70 text-on-surface rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest border border-sky-100" id="fullAddress" placeholder="Flat #, Building/Apartment Name, Street, PIN Code" required rows="2">Flat 302, Palm Breeze Terraces, 8th Main, 4th Block, Koramangala - 560034</textarea>
-            </div>
-
-            <!-- Mini Map Anchor -->
-            <div class="space-y-2 pt-1">
-              <div class="flex items-center justify-between">
-                <span class="font-label text-xs text-on-surface-variant font-medium">Geo-Coordinate Accuracy Marker</span>
-                <span class="font-label text-xs text-primary flex items-center gap-1 font-semibold">
-                  <span class="w-2 h-2 rounded-full bg-secondary animate-ping"></span> 12.9345° N, 77.6268° E
-                </span>
-              </div>
-              <div class="relative rounded-xl overflow-hidden shadow-md group border border-sky-200/60">
-                <div class="w-full h-36 bg-cover bg-center rounded-xl transition-transform duration-500 group-hover:scale-[1.01]" style="background-image: url('https://images.unsplash.com/photo-1524813686514-a57563d77d61?auto=format&fit=crop&w=1000&q=80');"></div>
-                <div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/80 via-transparent to-transparent pointer-events-none"></div>
-                <div class="absolute bottom-3 left-3 right-3 flex flex-col sm:flex-row items-center justify-between gap-2">
-                  <div class="flex items-center gap-1.5 bg-surface-container-lowest/90 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-medium text-on-surface">
-                    <span class="material-symbols-outlined text-primary text-sm">my_location</span>
-                    <span>Pin pinned to Koramangala</span>
-                  </div>
-                  <button class="bg-primary hover:bg-primary-container text-on-primary font-label text-xs px-3 py-1.5 rounded-full transition-all shadow-md flex items-center gap-1" onclick="showToast('Precision pin calibrated successfully!')" type="button">
-                    <span class="material-symbols-outlined text-xs">edit_location</span>
-                    Adjust Pin
-                  </button>
-                </div>
-              </div>
+              <input class="w-full px-4 py-2.5 rounded-xl bg-surface-container-low/70 border border-sky-100 text-sm font-bold" id="monthlyRent" placeholder="Monthly Rent (₹)" required type="number" value="24500" />
+              <input class="w-full px-4 py-2.5 rounded-xl bg-surface-container-low/70 border border-sky-100 text-sm font-bold" id="securityDeposit" placeholder="Deposit (₹)" required type="number" value="40000" />
             </div>
           </div>
 
-          <!-- Section 3: Room Pricing & Accommodation Setup -->
-          <div class="space-y-4 pt-2">
-            <div class="flex items-center gap-2">
-              <span class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center font-label text-xs font-bold">3</span>
-              <h3 class="text-base font-bold text-on-surface">Room Pricing & Accommodation Setup</h3>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="space-y-1.5">
-                <label class="font-label text-xs font-semibold text-on-surface" for="monthlyRent">Monthly Rent (INR) *</label>
-                <div class="relative flex items-center">
-                  <span class="absolute left-3.5 text-lg font-bold text-primary">₹</span>
-                  <input class="w-full pl-9 pr-20 bg-surface-container-low/70 text-on-surface font-bold text-lg rounded-xl py-2 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest border border-sky-100" id="monthlyRent" placeholder="20000" required step="500" type="number" value="24500" oninput="updateLivePreviewCard()" />
-                  <span class="absolute right-3.5 font-label text-xs text-on-surface-variant font-medium">/ month</span>
-                </div>
-              </div>
-
-              <div class="space-y-1.5">
-                <label class="font-label text-xs font-semibold text-on-surface" for="securityDeposit">Security Deposit (INR) *</label>
-                <div class="relative flex items-center">
-                  <span class="absolute left-3.5 text-lg font-bold text-on-surface-variant">₹</span>
-                  <input class="w-full pl-9 pr-32 bg-surface-container-low/70 text-on-surface font-bold text-lg rounded-xl py-2 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest border border-sky-100" id="securityDeposit" placeholder="40000" required step="1000" type="number" value="40000" oninput="updateLivePreviewCard()" />
-                  <span class="absolute right-3.5 font-label text-[11px] text-secondary font-semibold bg-secondary-container/40 px-2 py-0.5 rounded">Low Deposit</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="space-y-1.5">
-                <label class="font-label text-xs font-semibold text-on-surface" for="roomTypeSelect">Room Type / Layout *</label>
-                <select class="w-full bg-surface-container-low/70 text-on-surface rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest border border-sky-100" id="roomTypeSelect" required onchange="updateLivePreviewCard()">
-                  <option selected value="Private Room">Private Room (Attached Balcony & Washroom)</option>
-                  <option value="Entire 1 BHK Studio Apartment">Entire 1 BHK Studio Apartment</option>
-                  <option value="Master Bedroom">Master Bedroom in Shared Luxury Flat</option>
-                  <option value="Twin Sharing Room">Twin Sharing Room (AC Furnished)</option>
-                </select>
-              </div>
-
-              <div class="space-y-1.5">
-                <label class="font-label text-xs font-semibold text-on-surface" for="moveInDate">Earliest Move-In Date *</label>
-                <input class="w-full bg-surface-container-low/70 text-on-surface rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest border border-sky-100" id="moveInDate" required type="date" value="2026-10-01" />
-              </div>
-            </div>
-
-            <!-- Quick Amenities Inclusions Selector -->
-            <div class="space-y-2 pt-1">
-              <label class="font-label text-xs font-semibold text-on-surface">Key Inclusions (Click to Toggle)</label>
-              <div class="flex flex-wrap gap-2" id="amenityPills">
-                <button class="amenity-chip active px-3.5 py-1.5 rounded-full font-label text-xs bg-primary-fixed text-on-primary-fixed font-semibold border border-primary/20 transition-all" onclick="toggleAmenity(this)" type="button">
-                  High-Speed WiFi (300Mbps)
-                </button>
-                <button class="amenity-chip active px-3.5 py-1.5 rounded-full font-label text-xs bg-primary-fixed text-on-primary-fixed font-semibold border border-primary/20 transition-all" onclick="toggleAmenity(this)" type="button">
-                  Attached Washroom
-                </button>
-                <button class="amenity-chip active px-3.5 py-1.5 rounded-full font-label text-xs bg-primary-fixed text-on-primary-fixed font-semibold border border-primary/20 transition-all" onclick="toggleAmenity(this)" type="button">
-                  Air Conditioner
-                </button>
-                <button class="amenity-chip px-3.5 py-1.5 rounded-full font-label text-xs bg-surface-container-low text-on-surface-variant hover:bg-surface-container transition-all border border-sky-100" onclick="toggleAmenity(this)" type="button">
-                  Daily Housekeeping
-                </button>
-                <button class="amenity-chip px-3.5 py-1.5 rounded-full font-label text-xs bg-surface-container-low text-on-surface-variant hover:bg-surface-container transition-all border border-sky-100" onclick="toggleAmenity(this)" type="button">
-                  Washing Machine
-                </button>
-                <button class="amenity-chip px-3.5 py-1.5 rounded-full font-label text-xs bg-surface-container-low text-on-surface-variant hover:bg-surface-container transition-all border border-sky-100" onclick="toggleAmenity(this)" type="button">
-                  Covered Bike Parking
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section 4: Photo Gallery & Drag/Drop Liquid Zone -->
-          <div class="space-y-4 pt-2">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <span class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center font-label text-xs font-bold">4</span>
-                <h3 class="text-base font-bold text-on-surface">Room Photographs & Video Tour</h3>
-              </div>
-              <span class="font-label text-xs text-secondary font-semibold" id="photosCountText">3 Photos Staged</span>
-            </div>
-
-            <!-- Drag and Drop Glass Zone -->
-            <div class="relative group cursor-pointer bg-gradient-to-b from-surface-container-low/60 to-surface-container-lowest/80 border-2 border-dashed border-sky-300/70 hover:border-primary rounded-2xl p-6 text-center transition-all hover:bg-sky-50/50 shadow-inner" id="dropZone">
-              <input accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" multiple id="hostPhotoInput" type="file" />
-              <div class="flex flex-col items-center justify-center space-y-2">
-                <div class="w-12 h-12 rounded-full bg-secondary-container/40 text-primary flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
-                  <span class="material-symbols-outlined text-2xl">cloud_upload</span>
-                </div>
-                <p class="font-label text-sm text-on-surface font-bold">Drag & drop room photos, or click to browse</p>
-                <p class="text-xs text-on-surface-variant max-w-sm">Supports JPG, PNG, WEBP files up to 10MB each. High-res wide angles boost inquiries by 85%.</p>
-                <div class="pt-1 flex items-center gap-3 text-on-surface-variant font-label text-xs">
-                  <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs text-secondary">check</span> Bedroom</span>
-                  <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs text-secondary">check</span> Washroom</span>
-                  <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs text-secondary">check</span> Balcony</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Staged Photo Previews Container -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1" id="photoPreviewsContainer">
-              <!-- Staged Item 1 -->
-              <div class="relative group rounded-xl overflow-hidden bg-surface-container shadow-md border border-sky-100">
-                <img class="w-full h-28 object-cover" src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=600&q=80" alt="Master Bedroom" />
-                <div class="absolute top-2 left-2 bg-primary text-on-primary font-label text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm font-bold">
-                  <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span> Cover
-                </div>
-                <div class="p-2 bg-surface-container-lowest flex items-center justify-between font-label text-[11px]">
-                  <span class="text-on-surface truncate">bedroom_view.jpg</span>
-                  <span class="text-on-surface-variant">2.4 MB</span>
-                </div>
-              </div>
-
-              <!-- Staged Item 2 -->
-              <div class="relative group rounded-xl overflow-hidden bg-surface-container shadow-md border border-sky-100">
-                <img class="w-full h-28 object-cover" src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=600&q=80" alt="Washroom" />
-                <div class="p-2 bg-surface-container-lowest flex items-center justify-between font-label text-[11px]">
-                  <span class="text-on-surface truncate">washroom.jpg</span>
-                  <span class="text-on-surface-variant">1.8 MB</span>
-                </div>
-              </div>
-
-              <!-- Staged Item 3 -->
-              <div class="relative group rounded-xl overflow-hidden bg-surface-container shadow-md border border-sky-100">
-                <img class="w-full h-28 object-cover" src="https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=600&q=80" alt="Balcony" />
-                <div class="p-2 bg-surface-container-lowest flex items-center justify-between font-label text-[11px]">
-                  <span class="text-on-surface truncate">balcony_view.jpg</span>
-                  <span class="text-on-surface-variant">3.1 MB</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Submission Call To Action Bar -->
-          <div class="pt-4 border-t border-sky-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-1.5 text-on-surface-variant font-label text-xs">
-              <span class="material-symbols-outlined text-secondary text-sm">verified_user</span>
-              <span>Zero brokerage. Direct lister-to-tenant instant connection.</span>
-            </div>
-            <div class="flex items-center gap-3 w-full sm:w-auto">
-              <button class="w-1/2 sm:w-auto px-5 py-2.5 rounded-full font-label text-xs font-bold bg-surface-container text-on-surface hover:bg-surface-container-high transition-all" type="button" onclick="showToast('Listing draft saved locally!')">
-                Save Draft
-              </button>
-              <button class="w-1/2 sm:w-auto px-6 py-2.5 rounded-full font-label text-xs font-bold bg-primary hover:bg-primary-container text-on-primary hover:text-on-primary-container shadow-[0_4px_20px_rgba(0,97,148,0.28)] transition-all flex items-center justify-center gap-2" id="publishBtn" type="submit">
-                <span class="material-symbols-outlined text-base">rocket_launch</span>
-                Publish Listing Now
-              </button>
-            </div>
-          </div>
+          <button class="px-6 py-2.5 rounded-full font-label text-xs font-bold bg-primary text-on-primary shadow-md" type="submit">
+            Publish Listing Now
+          </button>
         </form>
 
-        <!-- Right Column: Real-Time Sync & Live Preview Sidebar -->
         <div class="lg:col-span-4 space-y-6">
-          
-          <!-- Supabase Real-time Cloud Pipeline Status Card -->
-          <div class="bg-surface-container-lowest/85 backdrop-blur-xl rounded-2xl p-5 shadow-md border border-sky-100 space-y-3 relative overflow-hidden">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <span class="w-3 h-3 rounded-full bg-secondary animate-pulse" id="supabasePulseDot"></span>
-                <span class="font-label text-sm text-on-surface font-bold">Supabase Realtime Cloud</span>
-              </div>
-              <span class="font-label text-[10px] bg-secondary-container/40 text-on-secondary-container px-2 py-0.5 rounded-full font-mono font-bold">table: rooms</span>
-            </div>
-
-            <div class="p-3 bg-surface-container-low rounded-xl space-y-1.5 font-mono text-xs text-on-surface-variant">
-              <div class="flex justify-between">
-                <span>status:</span>
-                <span class="text-secondary font-bold" id="supabaseStatusText">connected_authenticated</span>
-              </div>
-              <div class="flex justify-between">
-                <span>rls_policy:</span>
-                <span class="text-on-surface">public_read_write</span>
-              </div>
-              <div class="flex justify-between">
-                <span>last_query:</span>
-                <span class="text-primary font-semibold truncate ml-2" id="lastQueryStatus">INIT - connected</span>
-              </div>
-              <div class="flex justify-between">
-                <span>last_ping:</span>
-                <span class="text-primary font-semibold" id="syncTimer">12ms ago</span>
-              </div>
-            </div>
-            <p class="text-xs text-on-surface-variant">Updates to room rent, availability, or photos sync immediately to all active seeker feeds via PostgreSQL stream.</p>
-          </div>
-
-          <!-- Live Listing Tenant Card Preview -->
-          <div class="space-y-2">
-            <div class="flex items-center justify-between px-1">
-              <span class="font-label text-xs text-on-surface font-bold uppercase tracking-wider">Live Tenant Card Preview</span>
-              <span class="font-label text-[11px] text-primary font-semibold">As seen on map</span>
-            </div>
-
-            <!-- Rendered Room Card Preview -->
-            <div class="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-lg border border-sky-100/80 transition-all hover:shadow-xl" id="previewCard">
-              <div class="relative h-44 w-full overflow-hidden">
-                <img class="w-full h-full object-cover" id="previewCardImg" src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=800&q=80" alt="Preview Room" />
-                <span class="absolute top-2.5 left-2.5 bg-inverse-surface/80 text-inverse-on-surface font-label text-[10px] px-2.5 py-0.5 rounded-full backdrop-blur-md font-semibold" id="previewCardType">
-                  Private Room
-                </span>
-                <span class="absolute top-2.5 right-2.5 bg-secondary-container text-on-secondary-container font-label text-[10px] px-2.5 py-0.5 rounded-full backdrop-blur-md font-bold flex items-center gap-1">
-                  <span class="material-symbols-outlined text-[11px]" style="font-variation-settings: 'FILL' 1;">shield</span> Verified
-                </span>
-                <div class="absolute bottom-2.5 left-2.5 bg-surface-container-lowest/90 backdrop-blur-md px-2.5 py-0.5 rounded-full font-label text-[10px] text-primary font-bold">
-                  Direct Host Listing
-                </div>
-              </div>
-
-              <div class="p-4 space-y-2">
-                <div class="flex items-baseline justify-between">
-                  <div>
-                    <span class="text-xl font-extrabold text-primary" id="previewCardRent">₹24,500</span>
-                    <span class="text-xs text-on-surface-variant font-normal"> / month</span>
-                  </div>
-                  <span class="font-label text-[11px] text-secondary bg-surface-container-low px-2 py-0.5 rounded font-medium" id="previewCardDeposit">Deposit: ₹40,000</span>
-                </div>
-                <h4 class="font-bold text-sm text-on-surface line-clamp-1" id="previewCardTitle">Palm Breeze Terraces - 4th Block</h4>
-                <p class="text-xs text-on-surface-variant flex items-center gap-1 truncate" id="previewCardLoc">
-                  <span class="material-symbols-outlined text-sm text-secondary">location_on</span>
-                  Koramangala, Opp. Sony World Signal
-                </p>
-                <div class="pt-1 flex items-center justify-between font-label text-[11px] text-on-surface-variant border-t border-sky-50">
-                  <span id="previewCardDate">Available Oct 1</span>
-                  <span>Furnished • AC • Balcony</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Host Quick Tips Card -->
-          <div class="bg-surface-container-high/60 rounded-2xl p-4 space-y-1.5 shadow-sm border border-sky-100">
-            <div class="flex items-center gap-1.5 text-primary font-label text-xs font-bold">
-              <span class="material-symbols-outlined text-sm">lightbulb</span>
-              <span>Dial Room Ease Lister Tip</span>
-            </div>
-            <p class="text-xs text-on-surface-variant leading-relaxed">Listings with prominent landmarks in the first 2 sentences receive 40% faster direct calls through the dialer.</p>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- Section: My Already Published Listings -->
-      <div class="space-y-4 pt-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <h2 class="text-xl font-bold text-on-surface">My Active Listings</h2>
-            <p class="text-xs text-on-surface-variant">Monitor live view counts, incoming dials, and toggle visibility on the spot.</p>
-          </div>
-
-          <div class="flex items-center gap-2">
-            <span class="font-label text-xs text-on-surface-variant">Filter by status:</span>
-            <button class="bg-primary-container text-on-primary-container font-label text-xs px-3 py-1 rounded-full font-semibold" id="filterAllBtn" onclick="filterMyListings('all')">All (<span id="listingsCount">2</span>)</button>
-            <button class="bg-surface-container-low text-on-surface-variant font-label text-xs px-3 py-1 rounded-full hover:bg-surface-container transition-all" onclick="filterMyListings('live')">Live (1)</button>
-            <button class="bg-surface-container-low text-on-surface-variant font-label text-xs px-3 py-1 rounded-full hover:bg-surface-container transition-all" onclick="filterMyListings('review')">In Review (1)</button>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="myActiveListingsContainer">
-          <!-- Existing Listing 1 -->
-          <div class="bg-surface-container-lowest/90 backdrop-blur-xl rounded-2xl p-5 shadow-[0_4px_24px_rgba(0,97,148,0.06)] border border-sky-100 flex flex-col sm:flex-row gap-4 items-start listing-card-row" data-status="live">
-            <div class="w-full sm:w-36 h-28 rounded-xl overflow-hidden flex-shrink-0 bg-surface-container">
-              <img class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=400&q=80" alt="1 BHK Studio" />
-            </div>
-            <div class="flex-1 space-y-1.5 w-full">
-              <div class="flex items-center justify-between">
-                <span class="inline-flex items-center gap-1 font-label text-[11px] bg-secondary-container/40 text-on-secondary-container px-2.5 py-0.5 rounded-full font-bold">
-                  <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Active & Listed
-                </span>
-                <span class="text-base font-extrabold text-primary">₹28,000<span class="text-xs text-on-surface-variant font-normal">/mo</span></span>
-              </div>
-              <h3 class="font-bold text-sm text-on-surface">1 BHK Studio &bull; Indiranagar 100ft Rd</h3>
-              <p class="text-xs text-on-surface-variant">Near Toit Brewpub, Indiranagar Metro Station (300m)</p>
-              <div class="flex items-center gap-3 pt-1 text-on-surface-variant font-label text-[11px]">
-                <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs">visibility</span> 432 Views</span>
-                <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs">call</span> 9 Direct Dials</span>
-                <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs">favorite</span> 24 Saved</span>
-              </div>
-              <div class="pt-2 flex items-center gap-2">
-                <button class="px-3 py-1 rounded-full font-label text-xs bg-surface-container text-on-surface hover:bg-surface-container-high transition-all font-medium" type="button">
-                  Edit Details
-                </button>
-                <button class="px-3 py-1 rounded-full font-label text-xs bg-surface-container text-on-surface hover:bg-surface-container-high transition-all font-medium" type="button">
-                  Pause Listing
-                </button>
-                <button class="ml-auto w-7 h-7 rounded-full bg-surface-container-low text-on-surface-variant flex items-center justify-center hover:bg-surface-container transition-all" type="button" title="Share listing">
-                  <span class="material-symbols-outlined text-xs">share</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Existing Listing 2 -->
-          <div class="bg-surface-container-lowest/90 backdrop-blur-xl rounded-2xl p-5 shadow-[0_4px_24px_rgba(0,97,148,0.06)] border border-sky-100 flex flex-col sm:flex-row gap-4 items-start listing-card-row" data-status="review">
-            <div class="w-full sm:w-36 h-28 rounded-xl overflow-hidden flex-shrink-0 bg-surface-container">
-              <img class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=400&q=80" alt="Shared 2 BHK" />
-            </div>
-            <div class="flex-1 space-y-1.5 w-full">
-              <div class="flex items-center justify-between">
-                <span class="inline-flex items-center gap-1 font-label text-[11px] bg-surface-container text-on-surface-variant px-2.5 py-0.5 rounded-full font-bold">
-                  <span class="w-1.5 h-1.5 rounded-full bg-outline"></span> Review Pending
-                </span>
-                <span class="text-base font-extrabold text-primary">₹34,000<span class="text-xs text-on-surface-variant font-normal">/mo</span></span>
-              </div>
-              <h3 class="font-bold text-sm text-on-surface">Shared 2 BHK &bull; Bandra West, Mumbai</h3>
-              <p class="text-xs text-on-surface-variant">Near Hill Road, 5 mins walk from Bandstand</p>
-              <div class="flex items-center gap-3 pt-1 text-on-surface-variant font-label text-[11px]">
-                <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs">schedule</span> Submitted 2h ago</span>
-                <span class="flex items-center gap-1"><span class="material-symbols-outlined text-xs">verified_user</span> Address Checked</span>
-              </div>
-              <div class="pt-2 flex items-center gap-2">
-                <button class="px-3 py-1 rounded-full font-label text-xs bg-surface-container text-on-surface hover:bg-surface-container-high transition-all font-medium" type="button">
-                  Modify Docs
-                </button>
-                <button class="px-3 py-1 rounded-full font-label text-xs bg-surface-container-low text-error hover:bg-error-container hover:text-on-error-container transition-all font-medium" type="button">
-                  Cancel
-                </button>
-              </div>
-            </div>
+          <div class="bg-surface-container-lowest rounded-2xl p-4 border border-sky-100 shadow-md">
+            <h4 class="font-bold text-sm mb-2">Live Tenant Card Preview</h4>
+            <img src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=800&q=80" class="w-full h-40 object-cover rounded-xl mb-2" />
+            <span class="text-lg font-extrabold text-primary">₹24,500/mo</span>
           </div>
         </div>
       </div>
-
     </main>
 
-    <!-- App Footer -->
+    <!-- Footer -->
     <footer class="w-full bg-surface-container-low/70 backdrop-blur-lg mt-auto border-t border-sky-100">
-      <div class="max-w-[1440px] mx-auto px-4 md:px-8 py-8">
-        <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-xs font-label text-on-surface-variant">
-          <div class="flex items-center gap-2">
-            <span class="font-bold text-primary">Dial Room Ease</span>
-            <span>&bull; Architectural transparency in modern living</span>
-          </div>
-          <div class="flex items-center gap-4">
-            <a href="#" class="hover:text-primary transition-colors">Privacy Policy</a>
-            <a href="#" class="hover:text-primary transition-colors">Terms of Service</a>
-            <a href="#" class="hover:text-primary transition-colors">Trust & Safety</a>
-          </div>
-          <div>&copy; 2026 Dial Room Ease Inc.</div>
-        </div>
+      <div class="max-w-[1440px] mx-auto px-4 md:px-8 py-8 text-xs text-on-surface-variant flex justify-between">
+        <span>Dial Room Ease &bull; Pan-India District Network</span>
+        <span>&copy; 2026 Dial Room Ease Inc.</span>
       </div>
     </footer>
-
   </div>
 
-  <!-- ====================================================================
-       AUTHENTICATION MODAL: LIQUID AZURE AUTH HUB (MATCHING PICTURES 4 & 5)
-       ==================================================================== -->
+  <!-- AUTH MODAL -->
   <div id="auth-modal-backdrop" class="modal-backdrop">
-    <div class="auth-hub-modal-card relative w-full max-w-5xl max-h-[92vh] overflow-y-auto bg-white/95 backdrop-blur-2xl rounded-3xl p-6 sm:p-8 md:p-10 shadow-[0_24px_70px_rgba(0,97,148,0.22)] border border-sky-100">
-      
-      <!-- Modal Close Button -->
-      <button type="button" id="auth-modal-close" class="absolute top-5 right-5 w-9 h-9 rounded-full bg-surface-container-low text-on-surface-variant hover:text-on-surface hover:bg-surface-container flex items-center justify-center transition-all z-20" aria-label="Close modal">
+    <div class="auth-hub-modal-card relative w-full max-w-2xl max-h-[92vh] overflow-y-auto bg-white/95 backdrop-blur-2xl rounded-3xl p-6 sm:p-8 shadow-2xl border border-sky-100">
+      <button type="button" id="auth-modal-close" class="absolute top-5 right-5 w-9 h-9 rounded-full bg-surface-container-low text-on-surface-variant flex items-center justify-center z-20">
         <span class="material-symbols-outlined text-lg">close</span>
       </button>
 
-      <!-- Auth Hub Header -->
       <div class="flex flex-col items-center text-center mb-6">
-        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-500 to-cyan-400 flex items-center justify-center text-white shadow-lg shadow-sky-500/30 mb-2.5">
-          <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">home</span>
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-500 to-cyan-400 flex items-center justify-center text-white shadow-lg mb-2.5">
+          <span class="material-symbols-outlined text-2xl">home</span>
         </div>
-        
-        <div class="flex items-center gap-2">
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-on-surface tracking-tight">Dial Room Ease</h2>
-          <span class="bg-cyan-100 text-cyan-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider font-label">AUTH HUB</span>
-        </div>
-        
-        <p class="text-xs sm:text-sm text-on-surface-variant mt-1">Liquid glass security gate for India's verified flatmates & hosts</p>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-on-surface">Dial Room Ease</h2>
+        <p class="text-xs sm:text-sm text-on-surface-variant mt-1">Select your space persona to proceed</p>
 
-        <!-- Mode Switcher Pill Buttons (Create Account vs Login) -->
-        <div class="inline-flex bg-surface-container-low p-1 rounded-full mt-5 border border-sky-100 shadow-inner">
-          <button type="button" id="tab-register" class="auth-tab-btn active flex items-center gap-1.5 px-5 py-2 rounded-full font-label text-xs font-bold transition-all">
-            <span class="material-symbols-outlined text-sm">person_add</span>
-            <span>Create Account</span>
-          </button>
-          <button type="button" id="tab-login" class="auth-tab-btn flex items-center gap-1.5 px-5 py-2 rounded-full font-label text-xs font-bold transition-all">
-            <span class="material-symbols-outlined text-sm">lock</span>
-            <span>Login</span>
-          </button>
+        <div class="inline-flex bg-surface-container-low p-1 rounded-full mt-5 border border-sky-100">
+          <button type="button" id="tab-register" class="auth-tab-btn active px-5 py-2 rounded-full font-label text-xs font-bold">Create Account</button>
+          <button type="button" id="tab-login" class="auth-tab-btn px-5 py-2 rounded-full font-label text-xs font-bold">Login</button>
         </div>
       </div>
 
-      <!-- Main Two-Column Auth Card Content -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
-        <!-- Left Column: Registration or Login Form -->
-        <div class="lg:col-span-7 space-y-5">
-          
-          <!-- REGISTER FORM -->
-          <form id="form-register" class="space-y-4">
-            
-            <!-- Step 1 Persona Selector -->
-            <div>
-              <div class="flex items-center justify-between mb-2">
-                <span class="font-label text-[11px] font-bold text-primary tracking-wider uppercase">STEP 1 &bull; CHOOSE YOUR SPACE PERSONA</span>
-                <span class="font-label text-[11px] text-on-surface-variant">Syncs with Supabase profiles</span>
+      <!-- REGISTER FORM -->
+      <form id="form-register" class="space-y-4">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-label text-[11px] font-bold text-primary uppercase">STEP 1 &bull; CHOOSE YOUR SPACE PERSONA</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="persona-card relative p-4 rounded-2xl bg-surface-container-low/80 border-2 border-transparent cursor-pointer flex flex-col justify-between" id="persona-seeker" onclick="selectPersona('seeker')">
+              <div class="absolute top-3 right-3 w-5 h-5 rounded-full bg-primary text-white hidden items-center justify-center text-xs font-bold persona-check">
+                <span class="material-symbols-outlined text-xs">check</span>
               </div>
-
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <!-- Persona 1: Looking for a Room (Default active) -->
-                <div class="persona-card active relative p-4 rounded-2xl bg-sky-50/70 border-2 border-primary/80 cursor-pointer transition-all shadow-sm flex flex-col justify-between" id="persona-seeker" onclick="selectPersona('seeker')">
-                  <div class="absolute top-3 right-3 w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold persona-check">
-                    <span class="material-symbols-outlined text-xs">check</span>
-                  </div>
-                  <div class="w-9 h-9 rounded-xl bg-sky-100 text-primary flex items-center justify-center mb-2.5">
-                    <span class="material-symbols-outlined text-xl">travel_explore</span>
-                  </div>
-                  <div>
-                    <h4 class="font-bold text-sm text-on-surface">Looking for a Room</h4>
-                    <p class="text-xs text-on-surface-variant mt-1 leading-snug">Tenant / Seeker &bull; Explore verified listings, map radar & split rent in ₹ INR.</p>
-                  </div>
-                </div>
-
-                <!-- Persona 2: Giving a Room -->
-                <div class="persona-card relative p-4 rounded-2xl bg-surface-container-low/80 border-2 border-transparent hover:border-sky-200 cursor-pointer transition-all flex flex-col justify-between" id="persona-owner" onclick="selectPersona('owner')">
-                  <div class="absolute top-3 right-3 w-5 h-5 rounded-full bg-primary text-white hidden items-center justify-center text-xs font-bold persona-check">
-                    <span class="material-symbols-outlined text-xs">check</span>
-                  </div>
-                  <div class="w-9 h-9 rounded-xl bg-cyan-100 text-secondary flex items-center justify-center mb-2.5">
-                    <span class="material-symbols-outlined text-xl">vpn_key</span>
-                  </div>
-                  <div>
-                    <h4 class="font-bold text-sm text-on-surface">Giving a Room</h4>
-                    <p class="text-xs text-on-surface-variant mt-1 leading-snug">Owner / Flatmate &bull; Post vacant spaces, review verified seekers instantly.</p>
-                  </div>
-                </div>
-              </div>
+              <h4 class="font-bold text-sm">Looking for a Room</h4>
+              <p class="text-xs text-on-surface-variant mt-1">Tenant / Seeker</p>
             </div>
 
-            <!-- Full Name Input -->
-            <div class="space-y-1">
-              <label class="font-label text-xs font-semibold text-on-surface" for="reg-name">Full Name</label>
-              <div class="relative flex items-center">
-                <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant/60 text-base">badge</span>
-                <input
-                  type="text"
-                  id="reg-name"
-                  class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-container-low/70 border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all placeholder:text-on-surface-variant/50"
-                  placeholder="e.g. Aditi Roy or Rohan Sharma"
-                  required
-                  oninput="updateLiveCodeSnippet()"
-                />
+            <div class="persona-card relative p-4 rounded-2xl bg-surface-container-low/80 border-2 border-transparent cursor-pointer flex flex-col justify-between" id="persona-owner" onclick="selectPersona('owner')">
+              <div class="absolute top-3 right-3 w-5 h-5 rounded-full bg-primary text-white hidden items-center justify-center text-xs font-bold persona-check">
+                <span class="material-symbols-outlined text-xs">check</span>
               </div>
+              <h4 class="font-bold text-sm">Giving a Room</h4>
+              <p class="text-xs text-on-surface-variant mt-1">Owner / Flatmate</p>
             </div>
-
-            <!-- Email Address Input -->
-            <div class="space-y-1">
-              <label class="font-label text-xs font-semibold text-on-surface" for="reg-email">Email Address</label>
-              <div class="relative flex items-center">
-                <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant/60 text-base">alternate_email</span>
-                <input
-                  type="email"
-                  id="reg-email"
-                  class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-container-low/70 border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all placeholder:text-on-surface-variant/50"
-                  placeholder="you@company.com or student@uni.edu"
-                  required
-                  oninput="updateLiveCodeSnippet()"
-                />
-              </div>
-            </div>
-
-            <!-- Create Strong Password Input -->
-            <div class="space-y-1">
-              <label class="font-label text-xs font-semibold text-on-surface" for="reg-password">Create Strong Password</label>
-              <div class="relative flex items-center">
-                <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant/60 text-base">lock</span>
-                <input
-                  type="password"
-                  id="reg-password"
-                  class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-surface-container-low/70 border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all placeholder:text-on-surface-variant/50"
-                  placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
-                  autocomplete="new-password"
-                  required
-                />
-                <button type="button" id="toggle-pwd-vis" class="absolute right-3 text-on-surface-variant/70 hover:text-on-surface p-1" onclick="togglePasswordVisibility('reg-password', this)">
-                  <span class="material-symbols-outlined text-base">visibility</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- SECURITY POLICY Live Box (2x2 Grid) -->
-            <div class="bg-surface-container-low/60 rounded-xl p-3 border border-sky-100 space-y-2">
-              <div class="flex items-center justify-between font-label text-[11px]">
-                <span class="font-bold text-on-surface-variant uppercase tracking-wider">SECURITY POLICY</span>
-                <span id="pwd-strength-text" class="font-semibold text-error">Weak</span>
-              </div>
-
-              <!-- Strength Progress Meter Bar -->
-              <div class="w-full h-1 bg-surface-container rounded-full overflow-hidden">
-                <div id="pwd-strength-bar" class="h-full w-1/4 bg-error transition-all duration-300"></div>
-              </div>
-
-              <!-- 2x2 Criteria Checklist -->
-              <div class="grid grid-cols-2 gap-2 pt-1 font-label text-xs text-on-surface-variant">
-                <div class="rule-item flex items-center gap-1.5" id="rule-length">
-                  <span class="rule-dot w-4 h-4 rounded-full border border-sky-300 flex items-center justify-center text-[10px] text-transparent">&bull;</span>
-                  <span>Min. 8 characters</span>
-                </div>
-                <div class="rule-item flex items-center gap-1.5" id="rule-upper">
-                  <span class="rule-dot w-4 h-4 rounded-full border border-sky-300 flex items-center justify-center text-[10px] text-transparent">&bull;</span>
-                  <span>Uppercase (A-Z)</span>
-                </div>
-                <div class="rule-item flex items-center gap-1.5" id="rule-digit">
-                  <span class="rule-dot w-4 h-4 rounded-full border border-sky-300 flex items-center justify-center text-[10px] text-transparent">&bull;</span>
-                  <span>Number(0-9)</span>
-                </div>
-                <div class="rule-item flex items-center gap-1.5" id="rule-symbol">
-                  <span class="rule-dot w-4 h-4 rounded-full border border-sky-300 flex items-center justify-center text-[10px] text-transparent">&bull;</span>
-                  <span>Symbol(!@#$%)</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Confirm Password Input -->
-            <div class="space-y-1">
-              <label class="font-label text-xs font-semibold text-on-surface" for="reg-confirm-password">Confirm Password</label>
-              <div class="relative flex items-center">
-                <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant/60 text-base">verified_user</span>
-                <input
-                  type="password"
-                  id="reg-confirm-password"
-                  class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-surface-container-low/70 border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all placeholder:text-on-surface-variant/50"
-                  placeholder="Re-enter same password"
-                  autocomplete="new-password"
-                  required
-                />
-                <button type="button" id="toggle-conf-pwd-vis" class="absolute right-3 text-on-surface-variant/70 hover:text-on-surface p-1" onclick="togglePasswordVisibility('reg-confirm-password', this)">
-                  <span class="material-symbols-outlined text-base">visibility</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Terms Checkbox -->
-            <div class="flex items-center gap-2 pt-1">
-              <input type="checkbox" id="reg-terms-check" checked class="rounded border-sky-300 text-primary focus:ring-primary w-4 h-4" required />
-              <label for="reg-terms-check" class="font-label text-xs text-on-surface-variant">
-                I agree to Dial Room Ease <a href="#" class="text-primary hover:underline">Terms of Service</a> & <a href="#" class="text-primary hover:underline">Privacy Policy</a>.
-              </label>
-            </div>
-
-            <!-- Complete Registration CTA Button -->
-            <button type="submit" id="reg-submit-btn" class="w-full py-3 px-6 rounded-xl font-label text-sm font-bold bg-[#006194] hover:bg-[#004e76] text-white shadow-[0_4px_20px_rgba(0,97,148,0.3)] transition-all flex items-center justify-center gap-2">
-              <span>Complete Registration</span>
-              <span class="material-symbols-outlined text-base">arrow_forward</span>
-            </button>
-
-            <!-- OR CONTINUE WITH Divider -->
-            <div class="relative flex items-center justify-center pt-1">
-              <div class="border-t border-sky-100 w-full"></div>
-              <span class="bg-white px-3 font-label text-[11px] text-on-surface-variant uppercase font-semibold absolute">OR CONTINUE WITH</span>
-            </div>
-
-            <!-- Social Action Buttons -->
-            <div class="grid grid-cols-2 gap-3 pt-2">
-              <button type="button" class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-surface-container-low hover:bg-surface-container border border-sky-100 font-label text-xs font-bold text-on-surface transition-all" onclick="showToast('Google OAuth flow is ready! Proceed with email registration or configure OAuth in Supabase.')">
-                <svg class="w-4 h-4" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-                </svg>
-                <span>Google</span>
-              </button>
-
-              <button type="button" class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-surface-container-low hover:bg-surface-container border border-sky-100 font-label text-xs font-bold text-on-surface transition-all" onclick="showToast('Phone OTP verification enabled via Supabase Auth!')">
-                <span class="material-symbols-outlined text-sm text-primary">smartphone</span>
-                <span>Phone OTP</span>
-              </button>
-            </div>
-          </form>
-
-          <!-- LOGIN FORM (Hidden by default, shown when Login tab active) -->
-          <form id="form-login" class="space-y-4" style="display: none;">
-            <div class="space-y-1">
-              <label class="font-label text-xs font-semibold text-on-surface" for="login-email">Email Address</label>
-              <div class="relative flex items-center">
-                <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant/60 text-base">alternate_email</span>
-                <input
-                  type="email"
-                  id="login-email"
-                  class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-surface-container-low/70 border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all placeholder:text-on-surface-variant/50"
-                  placeholder="name@example.com"
-                  autocomplete="username"
-                  required
-                />
-              </div>
-            </div>
-
-            <div class="space-y-1">
-              <div class="flex items-center justify-between">
-                <label class="font-label text-xs font-semibold text-on-surface" for="login-password">Password</label>
-                <a href="#" class="font-label text-xs text-primary hover:underline" onclick="showToast('Password reset link sent to your registered email.')">Forgot password?</a>
-              </div>
-              <div class="relative flex items-center">
-                <span class="material-symbols-outlined absolute left-3.5 text-on-surface-variant/60 text-base">lock</span>
-                <input
-                  type="password"
-                  id="login-password"
-                  class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-surface-container-low/70 border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-surface-container-lowest transition-all placeholder:text-on-surface-variant/50"
-                  placeholder="Enter your password"
-                  autocomplete="current-password"
-                  required
-                />
-                <button type="button" class="absolute right-3 text-on-surface-variant/70 hover:text-on-surface p-1" onclick="togglePasswordVisibility('login-password', this)">
-                  <span class="material-symbols-outlined text-base">visibility</span>
-                </button>
-              </div>
-            </div>
-
-            <button type="submit" class="w-full py-3 px-6 rounded-xl font-label text-sm font-bold bg-[#006194] hover:bg-[#004e76] text-white shadow-[0_4px_20px_rgba(0,97,148,0.3)] transition-all flex items-center justify-center gap-2">
-              <span>Log In</span>
-              <span class="material-symbols-outlined text-base">login</span>
-            </button>
-
-            <!-- OR CONTINUE WITH Divider -->
-            <div class="relative flex items-center justify-center pt-2">
-              <div class="border-t border-sky-100 w-full"></div>
-              <span class="bg-white px-3 font-label text-[11px] text-on-surface-variant uppercase font-semibold absolute">OR CONTINUE WITH</span>
-            </div>
-
-            <!-- Social Action Buttons -->
-            <div class="grid grid-cols-2 gap-3 pt-2">
-              <button type="button" class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-surface-container-low hover:bg-surface-container border border-sky-100 font-label text-xs font-bold text-on-surface transition-all" onclick="showToast('Google OAuth flow is ready!')">
-                <svg class="w-4 h-4" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-                </svg>
-                <span>Google</span>
-              </button>
-
-              <button type="button" class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-surface-container-low hover:bg-surface-container border border-sky-100 font-label text-xs font-bold text-on-surface transition-all" onclick="showToast('Phone OTP verification ready!')">
-                <span class="material-symbols-outlined text-sm text-primary">smartphone</span>
-                <span>Phone OTP</span>
-              </button>
-            </div>
-          </form>
-
-        </div>
-
-        <!-- Right Column: Supabase Auth Bridge & Real-Time Sync Sidebar -->
-        <div class="lg:col-span-5 space-y-4">
-          
-          <!-- Supabase Auth Bridge Card -->
-          <div class="bg-sky-50/70 border border-sky-200/60 rounded-2xl p-4 sm:p-5 space-y-3.5">
-            
-            <!-- Bridge Header -->
-            <div class="flex items-start justify-between gap-2">
-              <div class="flex items-start gap-2.5">
-                <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span class="material-symbols-outlined text-lg">database</span>
-                </div>
-                <div>
-                  <h3 class="text-sm font-bold text-on-surface leading-snug">Supabase Auth Bridge</h3>
-                  <p class="text-[11px] text-on-surface-variant font-medium">PostgreSQL Row-Level Security Enabled</p>
-                </div>
-              </div>
-              
-              <span class="inline-flex items-center gap-1 font-label text-[10px] bg-cyan-100 text-cyan-800 font-bold px-2 py-0.5 rounded-full flex-shrink-0">
-                <span class="w-1.5 h-1.5 rounded-full bg-cyan-600 animate-ping"></span> Active SDK Sync
-              </span>
-            </div>
-
-            <p class="text-[11px] text-on-surface-variant leading-relaxed">Dial Room Ease uses Supabase Auth + PostgreSQL profiles table to assign RBAC metadata instantly upon submission.</p>
-
-            <!-- Code Navigation Tabs -->
-            <div class="flex items-center gap-1 overflow-x-auto text-[11px] font-label border-b border-sky-200/60 pb-1" id="codeTabsHeader">
-              <button type="button" class="code-tab active px-2.5 py-1 rounded-lg font-bold text-primary bg-white shadow-xs" onclick="switchCodeTab('signup', this)">Auth Sign Up</button>
-              <button type="button" class="code-tab px-2.5 py-1 rounded-lg text-on-surface-variant hover:text-on-surface font-medium" onclick="switchCodeTab('insert', this)">Insert Profile</button>
-              <button type="button" class="code-tab px-2.5 py-1 rounded-lg text-on-surface-variant hover:text-on-surface font-medium" onclick="switchCodeTab('session', this)">Session Check</button>
-              <button type="button" class="code-tab px-2.5 py-1 rounded-lg text-on-surface-variant hover:text-on-surface font-medium" onclick="switchCodeTab('env', this)">.env.local / client setup</button>
-            </div>
-
-            <!-- Terminal Code Snippet Block -->
-            <div class="bg-[#131b2e] rounded-xl p-3.5 text-[11px] font-mono text-slate-200 shadow-inner relative overflow-hidden">
-              <div class="flex items-center justify-between text-[11px] text-sky-400 pb-2 border-b border-slate-700/60 font-semibold">
-                <span id="code-box-title">supabase.auth.signUp()</span>
-                <button type="button" id="code-copy-btn" class="flex items-center gap-1 text-slate-400 hover:text-white transition-colors" onclick="copyCodeSnippet()">
-                  <span class="material-symbols-outlined text-xs">content_copy</span>
-                  <span>Copy</span>
-                </button>
-              </div>
-
-              <!-- Code Content -->
-              <pre class="py-2.5 text-[10.5px] leading-relaxed overflow-x-auto text-slate-300" id="code-box-content">const { data, error } = await
-supabase.auth.signUp({
-  email: 'aditi@example.com',
-  password: '••••••••',
-  options: { data: { full_name: 'Aditi Roy',
-  role: 'seeker' } }
-});</pre>
-
-              <!-- Terminal Status Footer -->
-              <div class="flex items-center justify-between pt-2 border-t border-slate-700/60 text-[10px] text-slate-400 font-label">
-                <span class="flex items-center gap-1 text-emerald-400 font-medium">
-                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> SDK Status: Ready
-                </span>
-                <span class="font-mono">0ms latency</span>
-              </div>
-            </div>
-
-            <!-- Live User Metadata Payload Preview -->
-            <div class="bg-surface-container-lowest rounded-xl p-3 border border-sky-100 space-y-1.5">
-              <div class="flex items-center justify-between">
-                <span class="font-label text-[11px] font-bold text-on-surface">Live User Metadata Payload:</span>
-                <span class="font-mono text-[10px] font-bold text-primary uppercase bg-primary-fixed/50 px-2 py-0.5 rounded" id="live-payload-role">seeker</span>
-              </div>
-              <pre class="font-mono text-[10px] text-on-surface-variant bg-surface-container-low/70 p-2 rounded-lg leading-relaxed overflow-x-auto" id="live-payload-json">{
-  "role": "seeker",
-  "verified_kyc": false,
-  "default_currency": "INR",
-  "app": "dial_room_ease_v1"
-}</pre>
-            </div>
-
-            <!-- Metric Cards (100% Verified & Safe Match) -->
-            <div class="grid grid-cols-2 gap-3 pt-1">
-              <div class="bg-surface-container-lowest rounded-xl p-3 border border-sky-100 shadow-xs">
-                <div class="flex items-center gap-1 text-[11px] font-label font-bold text-primary">
-                  <span class="material-symbols-outlined text-xs">verified</span>
-                  <span>100% VERIFIED</span>
-                </div>
-                <div class="text-lg font-extrabold text-on-surface mt-1">32,400+</div>
-                <p class="text-[10px] text-on-surface-variant leading-tight mt-0.5">Shared rooms in Bengaluru, Delhi NCR, Pune</p>
-              </div>
-
-              <div class="bg-surface-container-lowest rounded-xl p-3 border border-sky-100 shadow-xs">
-                <div class="flex items-center gap-1 text-[11px] font-label font-bold text-primary">
-                  <span class="material-symbols-outlined text-xs">lock</span>
-                  <span>SAFE MATCH</span>
-                </div>
-                <div class="text-lg font-extrabold text-on-surface mt-1">Zero</div>
-                <p class="text-[10px] text-on-surface-variant leading-tight mt-0.5">Brokerage fee for direct flatmate swaps</p>
-              </div>
-            </div>
-
-            <!-- Sample Room Preview Pill Card -->
-            <div class="bg-surface-container-lowest rounded-xl p-2.5 border border-sky-100 flex items-center gap-3 shadow-xs">
-              <img src="https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=160&q=80" alt="Room preview" class="w-12 h-12 rounded-lg object-cover flex-shrink-0" />
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-1.5">
-                  <span class="font-label text-[9px] font-bold bg-sky-100 text-primary px-1.5 py-0.5 rounded">HSR Layout</span>
-                  <span class="text-xs font-extrabold text-on-surface">₹16,500<span class="text-[10px] text-on-surface-variant font-normal">/mo</span></span>
-                </div>
-                <p class="text-[10px] text-on-surface-variant truncate mt-0.5">Master Suite with Private Balcony & WiFi</p>
-              </div>
-            </div>
-
           </div>
         </div>
 
-      </div>
+        <input type="text" id="reg-name" class="w-full px-4 py-2.5 rounded-xl bg-surface-container-low/70 border border-sky-100 text-sm" placeholder="Full Name" required />
+        <input type="email" id="reg-email" class="w-full px-4 py-2.5 rounded-xl bg-surface-container-low/70 border border-sky-100 text-sm" placeholder="Email Address" required />
+        <input type="password" id="reg-password" class="w-full px-4 py-2.5 rounded-xl bg-surface-container-low/70 border border-sky-100 text-sm" placeholder="Password" required />
+        <input type="password" id="reg-confirm-password" class="w-full px-4 py-2.5 rounded-xl bg-surface-container-low/70 border border-sky-100 text-sm" placeholder="Confirm Password" required />
 
-      <!-- Modal Bottom Security Footnotes -->
-      <div class="mt-8 pt-4 border-t border-sky-100 flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-center text-xs font-label text-on-surface-variant">
-        <span class="inline-flex items-center gap-1.5">
-          <span class="material-symbols-outlined text-sm text-primary">verified_user</span>
-          <span>TLS 1.3 End-to-End Encrypted</span>
-        </span>
-        <span class="inline-flex items-center gap-1.5">
-          <span class="material-symbols-outlined text-sm text-primary">cloud</span>
-          <span>Powered by Supabase & Edge Functions</span>
-        </span>
-        <span class="inline-flex items-center gap-1.5">
-          <span class="material-symbols-outlined text-sm text-primary">apartment</span>
-          <span>India Coverage: 12 Metro Zones</span>
-        </span>
-      </div>
+        <button type="submit" id="reg-submit-btn" class="w-full py-3 px-6 rounded-xl font-label text-sm font-bold bg-[#006194] text-white shadow-md">
+          Complete Registration
+        </button>
+      </form>
 
+      <!-- LOGIN FORM -->
+      <form id="form-login" class="space-y-4" style="display: none;">
+        <input type="email" id="login-email" class="w-full px-4 py-2.5 rounded-xl bg-surface-container-low/70 border border-sky-100 text-sm" placeholder="Email Address" required />
+        <input type="password" id="login-password" class="w-full px-4 py-2.5 rounded-xl bg-surface-container-low/70 border border-sky-100 text-sm" placeholder="Password" required />
+        <button type="submit" class="w-full py-3 px-6 rounded-xl font-label text-sm font-bold bg-[#006194] text-white shadow-md">
+          Log In
+        </button>
+      </form>
     </div>
   </div>
 
-  <!-- Toast Notification Element -->
   <div id="app-toast" class="toast-msg"></div>
 
-  <!-- External Libraries -->
-  <!-- 1. Three.js for 3D Sky-Blue Bedroom -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <!-- 2. Leaflet for Interactive Map -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <!-- 3. Supabase Client Library -->
+  <!-- Leaflet & Supabase Libs -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- Application Scripts -->
   <script src="supabase-config.js"></script>
   <script src="supabase-client.js"></script>
-  <script src="bedroom3d.js"></script>
   <script src="map.js"></script>
   <script src="app.js"></script>
 </body>
