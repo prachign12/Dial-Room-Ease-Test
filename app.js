@@ -3,7 +3,7 @@
  * DIAL ROOM EASE - MAIN APPLICATION CONTROLLER
  * ============================================================================
  * Handles:
- * - Liquid Azure Auth Hub (Register & Login with live Supabase Auth Bridge)
+ * - Liquid Azure Auth Hub (Register & Login)
  * - Strict password validations with live 2x2 security policy checklist
  * - Persona switching ('Looking for a Room' / seeker vs 'Giving a Room' / owner)
  * - Host Management Studio with 4-step listing form & Supabase Realtime pipeline
@@ -16,7 +16,7 @@
   const state = {
     user: null,
     activeRole: "Looking For a Room", // "Looking For a Room" | "Giving a Room"
-    selectedPersona: "seeker", // "seeker" | "owner"
+    selectedPersona: null, // Replaced default "seeker" with null requiring manual selection
     selectedHostRole: "Property Owner",
     activeCodeTab: "signup",
     mapInstance: null,
@@ -104,7 +104,7 @@
   }
 
   // --------------------------------------------------------------------------
-  // AUTH HUB CONTROLLER (MATCHING PICTURES 4 & 5)
+  // AUTH HUB CONTROLLER
   // --------------------------------------------------------------------------
   function bindAuthEvents() {
     const modalBackdrop = document.getElementById("auth-modal-backdrop");
@@ -147,6 +147,13 @@
     if (formRegister) {
       formRegister.addEventListener("submit", async (e) => {
         e.preventDefault();
+
+        // Enforce persona selection check before proceeding
+        if (!state.selectedPersona) {
+          showToast("Please choose your space persona (Looking for a Room or Giving a Room).", "error");
+          return;
+        }
+
         const name = document.getElementById("reg-name").value.trim();
         const email = document.getElementById("reg-email").value.trim();
         const password = document.getElementById("reg-password").value;
@@ -280,7 +287,7 @@
 
     const name = document.getElementById("reg-name")?.value.trim() || "Aditi Roy";
     const email = document.getElementById("reg-email")?.value.trim() || "aditi@example.com";
-    const roleTag = state.selectedPersona;
+    const roleTag = state.selectedPersona || "seeker";
     const roleFull = roleTag === "owner" ? "Giving a Room" : "Looking For a Room";
 
     const config = window.SUPABASE_CONFIG || {};
